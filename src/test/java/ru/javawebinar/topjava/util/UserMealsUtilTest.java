@@ -26,7 +26,7 @@ class UserMealsUtilTest {
     );
 
     @Test
-    public void givenCorrectListOfMeals_whenFilteredByCycles_thenListsAreEquals() {
+    public void filteredByCycles_ShouldReturnCorrectListOfMeals() {
         List<UserMealWithExcess> expected = new ArrayList<>(Arrays.asList(
                 new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0)
                         , "Завтрак", 500, false),
@@ -40,21 +40,7 @@ class UserMealsUtilTest {
     }
 
     @Test
-    public void givenIncorrectListOfMeals_whenFilteredByCycles_thenListsAreEquals() {
-        List<UserMealWithExcess> expected = new ArrayList<>(Arrays.asList(
-                new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0)
-                        , "Завтрак", 500, false),
-                new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0)
-                        , "Завтрак", 1001, false)));
-
-        List<UserMealWithExcess> actual = UserMealsUtil.filteredByCycles(meals
-                , LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
-
-        assertNotEquals(expected, actual);
-    }
-
-    @Test
-    public void givenCorrectListOfMeals_whenFilteredByStreams_thenListsAreEquals() {
+    public void filteredByStreams_ShouldReturnCorrectListOfMeals() {
         List<UserMealWithExcess> expected = new ArrayList<>(Arrays.asList(
                 new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0)
                         , "Завтрак", 500, false),
@@ -69,24 +55,6 @@ class UserMealsUtilTest {
                 , LocalTime.of(7, 0), LocalTime.of(14, 0), 2000);
 
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void givenIncorrectListOfMeals_whenFilteredByStreams_thenListsAreEquals() {
-        List<UserMealWithExcess> expected = new ArrayList<>(Arrays.asList(
-                new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0)
-                        , "Завтрак", 500, false),
-                new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0)
-                        , "Обед", 1000, false),
-                new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0)
-                        , "Завтрак", 1000, true),
-                new UserMealWithExcess(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0)
-                        , "Обед", 501, false)));
-
-        List<UserMealWithExcess> actual = UserMealsUtil.filteredByStreams(meals
-                , LocalTime.of(7, 0), LocalTime.of(14, 0), 2000);
-
-        assertNotEquals(expected, actual);
     }
 
 }
