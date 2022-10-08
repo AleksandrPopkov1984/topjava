@@ -13,10 +13,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
+
+    public static final int CALORIES_PER_DAY = 2000;
+
     public static void main(String[] args) {
         List<Meal> meals = getListOfMeals();
-
-        List<MealTo> mealsTo = filteredByStreams(meals, LocalTime.of(0, 0), LocalTime.of(23, 59), 2000);
+        List<MealTo> mealsTo = filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), CALORIES_PER_DAY);
         mealsTo.forEach(System.out::println);
     }
 
