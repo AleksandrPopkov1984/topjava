@@ -35,8 +35,8 @@
             <td><tags:localDateTime date="${meal.dateTime}" pattern="yyyy-MM-dd HH:mm"/></td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td><a href="meals?action=edit&mealId=<c:out value="${meal.mealId}"/>">Update</a></td>
-            <td><a href="meals?action=delete&mealId=<c:out value="${meal.mealId}"/>">Delete</a></td>
+            <td><a href="meals?action=edit&id=<c:out value="${meal.id}"/>">Update</a></td>
+            <td><a href="meals?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
         </tr>
     </c:forEach>
 </table>

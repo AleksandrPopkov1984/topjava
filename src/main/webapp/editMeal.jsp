@@ -13,16 +13,16 @@
 
 <form method="POST" action='meals' name="frmAddMeal">
 
-    <input type="hidden" name="mealId" value="<c:out value="${meal.mealId}" />"/>
+    <input type="hidden" name="id" value="${meal.id}"/>
 
-    DateTime: <input type="text" name="dateTime" style=position:absolute;left:12% size="30"
-                     value="<tags:localDateTime pattern="yyyy-MM-dd HH:mm" date="${meal.dateTime}" />"/>
+    DateTime: <input type="datetime-local" name="dateTime" style=position:absolute;left:12% size="30"
+                     value="${meal.dateTime}"/>
     <br/><br/>
     Description: <input type="text" name="description" style=position:absolute;left:12% size="50"
-                        value="<c:out value="${meal.description}" />"/>
+                        value="${meal.description}"/>
     <br/><br/>
-    Calories: <input type="text" name="calories" style=position:absolute;left:12% size="25"
-                     value="<c:out value="${meal.calories}" />"/>
+    Calories: <input type="number" min=1 name="calories" style=position:absolute;left:12% size="25"
+                     value="${meal.calories}"/>
     <br/><br/>
     <input type="submit" value="Save"/>
     <input type="button" value="Cancel" onClick="window.location.href='meals'"/>
