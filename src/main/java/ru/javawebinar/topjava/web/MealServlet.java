@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.util.MealsUtil.*;
@@ -23,12 +24,12 @@ import static ru.javawebinar.topjava.util.MealsUtil.*;
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
     private MealsService service;
-    private DateTimeFormatter formatter;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     @Override
     public void init() {
         service = new MealsServiceCollections();
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
     }
 
     @Override
@@ -36,20 +37,18 @@ public class MealServlet extends HttpServlet {
         log.debug("redirect to meals");
         String action = request.getParameter("action");
 
-        if (null != action && action.equalsIgnoreCase("delete")) {
+        if ("delete".equalsIgnoreCase(action)) {
             log.debug("delete meal");
             int id = Integer.parseInt(request.getParameter("id"));
             service.delete(id);
-            List<MealTo> mealsTo = getListOfMealsToDisplay(service.getAllMeals());
-            request.setAttribute("meals", mealsTo);
             response.sendRedirect(request.getContextPath() + "/meals");
-        } else if (null != action && action.equalsIgnoreCase("edit")) {
+        } else if ("edit".equalsIgnoreCase(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             Meal meal = service.getById(id);
             request.setAttribute("meal", meal);
             request.getRequestDispatcher("/editMeal.jsp").forward(request, response);
         } else {
-            List<MealTo> mealsTo = getListOfMealsToDisplay(service.getAllMeals());
+            List<MealTo> mealsTo = getListOfMealsToDisplay(service.getAll().stream().collect(Collectors.toList()));
             request.setAttribute("meals", mealsTo);
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         }
@@ -73,12 +72,10 @@ public class MealServlet extends HttpServlet {
             meal.setId(Integer.parseInt(id));
             service.update(meal);
         }
-        List<MealTo> mealsTo = getListOfMealsToDisplay(service.getAllMeals());
-        request.setAttribute("meals", mealsTo);
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/meals");
     }
 
     private List<MealTo> getListOfMealsToDisplay(List<Meal> meals) {
-        return filteredByStreams(meals, LocalTime.of(0, 0), LocalTime.of(23, 59), CALORIES_PER_DAY);
+        return filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
     }
 }
