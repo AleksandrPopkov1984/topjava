@@ -18,8 +18,15 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
-@ContextConfiguration({"classpath:spring/spring-app.xml", "classpath:spring/spring-db.xml"})
+@ContextConfiguration({
+        "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-db.xml"
+})
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
@@ -35,46 +42,48 @@ public class MealServiceTest {
 
     @Test
     public void delete() {
-        service.delete(MEAL_1_ID, ADMIN_ID);
-        assertThrows(NotFoundException.class, () -> service.get(MEAL_1_ID, ADMIN_ID));
+        service.delete(breakfast20221020Admin.getId(), ADMIN_ID);
+        assertThrows(NotFoundException.class, () -> service.get(START_SEQ + 3, ADMIN_ID));
     }
 
     @Test
     public void deleteNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(MEAL_1_ID, NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> service.get(breakfast20221020Admin.getId(), NOT_FOUND));
     }
 
     @Test
     public void deleteDoesNotBelongToUser() {
-        assertThrows(NotFoundException.class, () -> service.delete(MEAL_1_ID, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.delete(breakfast20221020Admin.getId(), USER_ID));
     }
 
     @Test
     public void get() {
-        Meal meal = service.get(MEAL_4_ID, USER_ID);
-        assertMatch(meal, meal4);
+        Meal meal = service.get(lunch20221020User.getId(), USER_ID);
+        assertMatch(meal, lunch20221020User);
     }
 
     @Test
     public void getDoesNotBelongToUser() {
-        assertThrows(NotFoundException.class, () -> service.get(MEAL_4_ID, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(lunch20221020User.getId(), ADMIN_ID));
     }
 
     @Test
     public void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(MEAL_3_ID, NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> service.get(lunch20221020Admin.getId(), NOT_FOUND));
     }
 
     @Test
     public void getBetweenInclusive() {
         List<Meal> betweenInclusive = service.getBetweenInclusive(START_DATE, END_DATE, USER_ID);
-        assertMatch(betweenInclusive, meal4, meal3);
+        assertMatch(betweenInclusive, dinner20221021User, lunch20221021User, breakfast20221021User, dinner20221020User,
+                lunch20221020User, breakfast20221020User);
     }
 
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(ADMIN_ID);
-        assertMatch(all, meal2, meal1);
+        assertMatch(all, dinner20221021Admin, lunch20221021Admin, breakfast20221021Admin, dinner20221020Admin,
+                lunch20221020Admin, breakfast20221020Admin);
     }
 
     @Test
@@ -97,11 +106,11 @@ public class MealServiceTest {
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, ADMIN_ID);
-        assertMatch(service.get(MEAL_1_ID, ADMIN_ID), getUpdated());
+        assertMatch(service.get(breakfast20221020Admin.getId(), ADMIN_ID), getUpdated());
     }
 
     @Test
     public void updateDoesNotBelongToUser() {
-        assertThrows(NotFoundException.class, () -> service.update(meal1, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.update(breakfast20221020Admin, USER_ID));
     }
 }
