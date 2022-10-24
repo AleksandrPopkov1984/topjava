@@ -56,7 +56,7 @@ public class MealServiceTest {
 
     @Test
     public void deleteDoesNotExist() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND_MEAL_ID, NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND_MEAL_ID, ADMIN_ID));
     }
 
     @Test
@@ -77,7 +77,7 @@ public class MealServiceTest {
 
     @Test
     public void getDoesNotExist() {
-        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND_MEAL_ID, NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND_MEAL_ID, USER_ID));
     }
 
     @Test
