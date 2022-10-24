@@ -12,8 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -21,10 +19,10 @@ import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
-import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-app-repository.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
@@ -43,7 +41,7 @@ public class MealServiceTest {
     @Test
     public void delete() {
         service.delete(breakfast20221020Admin.getId(), ADMIN_ID);
-        assertThrows(NotFoundException.class, () -> service.get(START_SEQ + 3, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(breakfast20221020Admin.getId(), ADMIN_ID));
     }
 
     @Test
@@ -54,6 +52,11 @@ public class MealServiceTest {
     @Test
     public void deleteDoesNotBelongToUser() {
         assertThrows(NotFoundException.class, () -> service.delete(breakfast20221020Admin.getId(), USER_ID));
+    }
+
+    @Test
+    public void deleteDoesNotExist() {
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND_MEAL_ID, NOT_FOUND));
     }
 
     @Test
@@ -73,9 +76,20 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getDoesNotExist() {
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND_MEAL_ID, NOT_FOUND));
+    }
+
+    @Test
     public void getBetweenInclusive() {
         List<Meal> betweenInclusive = service.getBetweenInclusive(START_DATE, END_DATE, USER_ID);
-        assertMatch(betweenInclusive, dinner20221021User, lunch20221021User, breakfast20221021User, dinner20221020User,
+        assertMatch(betweenInclusive, dinner20221021User, lunch20221021User, breakfast20221021User);
+    }
+
+    @Test
+    public void getBetweenBordersAreNotDefined() {
+        List<Meal> betweenNulls = service.getBetweenInclusive(null, null, USER_ID);
+        assertMatch(betweenNulls, dinner20221021User, lunch20221021User, breakfast20221021User, dinner20221020User,
                 lunch20221020User, breakfast20221020User);
     }
 
@@ -99,7 +113,7 @@ public class MealServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         assertThrows(DuplicateKeyException.class, () ->
-                service.create(new Meal(LocalDateTime.of(2022, Month.OCTOBER, 20, 8, 0, 0, 0), "Завтрак", 500), ADMIN_ID));
+                service.create(new Meal(breakfast20221021User.getDateTime(), "Завтрак", 800), USER_ID));
     }
 
     @Test
