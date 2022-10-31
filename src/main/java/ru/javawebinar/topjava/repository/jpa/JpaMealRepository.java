@@ -21,16 +21,18 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
+        User ref = em.getReference(User.class, userId);
+        meal.setUser(ref);
         if (meal.isNew()) {
-            User ref = em.getReference(User.class, userId);
-            meal.setUser(ref);
             em.persist(meal);
+            return meal;
         } else {
-            User ref = em.getReference(User.class, userId);
-            meal.setUser(ref);
-            em.merge(meal);
+            if (get(meal.id(), userId) != null) {
+                return em.merge(meal);
+            } else {
+                return null;
+            }
         }
-        return meal;
     }
 
     @Override
@@ -44,8 +46,8 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return em.find(Meal.class, id) != null
-                && em.find(Meal.class, id).getUser().getId() == userId ? em.find(Meal.class, id) : null;
+        Meal meal = em.find(Meal.class, id);
+        return meal != null && meal.getUser().getId() == userId ? meal : null;
     }
 
     @Override
