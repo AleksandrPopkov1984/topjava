@@ -18,14 +18,7 @@ public class TimingRules {
 
         @Override
         protected void finished(long nanos, Description description) {
-            String result = String.format("%-95s %s %7d", description.getDisplayName(), "passed", TimeUnit.NANOSECONDS.toMillis(nanos));
-            results.append(result).append('\n');
-            log.info(result + " ms\n");
-        }
-
-        @Override
-        protected void failed(long nanos, Throwable e, Description description) {
-            String result = String.format("%-95s %s %7d", description.getDisplayName(), "failed", TimeUnit.NANOSECONDS.toMillis(nanos));
+            String result = String.format("%-95s %7d", description.getDisplayName(), TimeUnit.NANOSECONDS.toMillis(nanos));
             results.append(result).append('\n');
             log.info(result + " ms\n");
         }
@@ -40,8 +33,7 @@ public class TimingRules {
 
         @Override
         protected void after() {
-            log.info("\n" + getDelim(100, '-') + "\nTest + Duration, ms" + "\n" + getDelim(100, '-') + "\n" + results
-                    + getDelim(100, '-') + "\n");
+            log.info("\n" + getDelim(100, '-') + "\nTest + Duration, ms" + "\n" + results + "\n");
         }
     };
 

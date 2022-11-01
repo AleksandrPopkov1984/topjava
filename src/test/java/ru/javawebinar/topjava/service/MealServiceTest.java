@@ -32,14 +32,14 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
-    @Autowired
-    private MealService service;
-
     @ClassRule
     public static ExternalResource summary = TimingRules.SUMMARY;
 
     @Rule
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
+
+    @Autowired
+    private MealService service;
 
     @Test
     public void delete() {
