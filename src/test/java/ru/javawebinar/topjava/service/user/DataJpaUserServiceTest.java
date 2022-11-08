@@ -10,7 +10,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 @ActiveProfiles("datajpa")
@@ -80,5 +80,12 @@ public class DataJpaUserServiceTest extends UserServiceTest {
     public void getAll() {
         List<User> all = service.getAll();
         USER_MATCHER.assertMatch(all, admin, guest, user);
+    }
+
+    @Test
+    public void getWithMeals() {
+        User user = service.getWithMeals(USER_ID);
+//        USER_MATCHER_WITH_MEALS.assertMatch(user, UserTestData.userWithMeals);
+
     }
 }

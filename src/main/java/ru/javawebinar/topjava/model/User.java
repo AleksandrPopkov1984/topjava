@@ -55,7 +55,7 @@ public class User extends AbstractNamedEntity {
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
     @OneToMany(mappedBy = "user")
-    @OrderBy("dateTime DESC")
+    @OrderBy("dateTime ASC")
     private List<Meal> meals;
 
     public User() {
@@ -66,7 +66,7 @@ public class User extends AbstractNamedEntity {
     }
 
     public User(Integer id, String name, String email, String password, Role... roles) {
-        this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, new Date(), Arrays.asList((roles)));
+        this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, new Date(), Arrays.asList(roles));
     }
 
     public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Date registered, Collection<Role> roles) {
@@ -77,6 +77,14 @@ public class User extends AbstractNamedEntity {
         this.enabled = enabled;
         this.registered = registered;
         setRoles(roles);
+    }
+
+    public User(Integer id, String name, String email, String password, List<Meal> meals, Role... roles) {
+        super(id, name);
+        this.email = email;
+        this.password = password;
+        setMeals(meals);
+        Arrays.asList(roles);
     }
 
     public String getEmail() {
@@ -138,12 +146,15 @@ public class User extends AbstractNamedEntity {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", email=" + email +
-                ", name=" + name +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", enabled=" + enabled +
+                ", registered=" + registered +
                 ", roles=" + roles +
                 ", caloriesPerDay=" + caloriesPerDay +
+                ", meals=" + meals +
                 '}';
     }
 }
