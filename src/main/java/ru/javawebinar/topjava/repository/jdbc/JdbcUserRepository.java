@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -12,12 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public class JdbcUserRepository implements UserRepository {
 
-    private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+    private static final UserResultSetExtractor RESULT_SET_EXTRACTOR = new UserResultSetExtractor();
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -43,10 +45,18 @@ public class JdbcUserRepository implements UserRepository {
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
+            String sql = "INSERT INTO user_roles VALUES (?, ?)";
+            batchUpdate(user, sql, 2);
         } else if (namedParameterJdbcTemplate.update("""
                    UPDATE users SET name=:name, email=:email, password=:password, 
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
-                """, parameterSource) == 0) {
+                """, parameterSource) != 0) {
+            String sql = """
+                    INSERT INTO user_roles VALUES (?, ?) 
+                    ON CONFLICT ON CONSTRAINT user_roles_idx DO UPDATE SET role = ? WHERE user_roles.user_id = ?
+                    """;
+            batchUpdate(user, sql, 4);
+        } else {
             return null;
         }
         return user;
@@ -60,19 +70,42 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User get(int id) {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        String sql = "SELECT * FROM users u LEFT JOIN user_roles r ON u.id = r.user_id WHERE id=?";
+        List<User> users = jdbcTemplate.query(sql, RESULT_SET_EXTRACTOR, id);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
+        String sql = "SELECT * FROM users u LEFT JOIN user_roles r ON u.id = r.user_id WHERE email=?";
+        List<User> users = jdbcTemplate.query(sql, RESULT_SET_EXTRACTOR, email);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        String sql = "SELECT * FROM users u LEFT JOIN user_roles r ON u.id = r.user_id ORDER BY name, email";
+        List<User> users = jdbcTemplate.query(sql, RESULT_SET_EXTRACTOR);
+        return users;
+    }
+
+    private void batchUpdate(User user, String sql, int parametersQuantity) {
+        int[] count = jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                if (parametersQuantity == 2) {
+                    ps.setInt(1, user.getId());
+                    ps.setString(2, String.valueOf(user.getRoles().stream().toList().get(i)));
+                } else {
+                    ps.setInt(1, user.getId());
+                    ps.setString(2, String.valueOf(user.getRoles().stream().toList().get(i)));
+                    ps.setString(3, String.valueOf(user.getRoles().stream().toList().get(i)));
+                    ps.setInt(4, user.getId());
+                }
+            }
+
+            public int getBatchSize() {
+                return user.getRoles().size();
+            }
+        });
     }
 }
