@@ -24,6 +24,10 @@ public class UserTestData {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Set.of(Role.USER, Role.ADMIN));
     }
 
+    public static User getNewWithoutRoles() {
+        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Set.of());
+    }
+
     public static User getUpdated() {
         User updated = new User(user);
         updated.setEmail("update@gmail.com");
@@ -32,6 +36,26 @@ public class UserTestData {
         updated.setPassword("newPass");
         updated.setEnabled(false);
         updated.setRoles(Set.of(Role.ADMIN, Role.USER));
+        return updated;
+    }
+
+    public static User getDeletedOneRole() {
+        User updated = new User(user);
+        updated.getRoles().remove(Role.USER);
+        return updated;
+    }
+
+    public static User getDeletedTwoRoles() {
+        User updated = new User(admin);
+        updated.getRoles().remove(Role.ADMIN);
+        updated.getRoles().remove(Role.USER);
+        return updated;
+    }
+
+    public static User changeRoleFromUserToAdmin() {
+        User updated = new User(user);
+        updated.getRoles().remove(Role.USER);
+        updated.setRoles(Set.of(Role.ADMIN));
         return updated;
     }
 }

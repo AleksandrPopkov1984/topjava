@@ -23,7 +23,7 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 @RequestMapping("/meals")
 public class JspMealController extends AbstractMealController {
 
-    @GetMapping("")
+    @GetMapping
     public String getAll(Model model) {
         model.addAttribute("meals", getAll());
         return "meals";
@@ -57,14 +57,11 @@ public class JspMealController extends AbstractMealController {
     public String create(Model model) {
         final Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         model.addAttribute("meal", meal);
-        model.addAttribute("type", "create");
         return "mealForm";
     }
 
-    @PostMapping("")
+    @PostMapping
     public String save(HttpServletRequest request) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
