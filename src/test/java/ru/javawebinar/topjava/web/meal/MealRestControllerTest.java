@@ -49,7 +49,7 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        String startDate = "2020-01-30T19:59:00";
+        String startDate = "2020-01-30T00:00:00";
         String startTime = "2020-01-30T19:59:00";
         String endDate = "2020-01-31T00:00:00";
         String endTime = "2020-01-31T23:59:00";
