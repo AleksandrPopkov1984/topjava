@@ -33,7 +33,10 @@
                 <spring:message code="meal.filter"/>
             </button>
         </form>
-        <br/>
+        <button class="btn btn-primary" id="filter_reset">
+            <spring:message code="meal.reset_filter"/>
+        </button>
+        <br/><br/>
         <button class="btn btn-primary" onclick="add()">
             <span class="fa fa-plus"></span>
             <spring:message code="meal.add"/>
@@ -81,7 +84,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description" class="col-form-label"><spring:message code="meal.description"/></label>
+                        <label for="description" class="col-form-label"><spring:message
+                                code="meal.description"/></label>
                         <input type="text" class="form-control" id="description" name="description"
                                placeholder="<spring:message code="meal.description"/>">
                     </div>

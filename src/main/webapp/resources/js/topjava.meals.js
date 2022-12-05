@@ -56,3 +56,12 @@ function filterTable() {
 function updateTableByData(data) {
     ctx.datatableApi.clear().rows.add(data).draw();
 }
+
+$('#filter_reset').click(function () {
+    resetButtonBind();
+    filterTable();
+});
+
+function resetButtonBind() {
+    $('#filterDetails')[0].reset();
+}
