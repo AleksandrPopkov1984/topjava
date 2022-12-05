@@ -48,8 +48,9 @@ function filterTable() {
         type: "GET",
         url: ctx.ajaxUrl + 'filter',
         data: $('#filterDetails').serialize(),
-        success: updateTableByData
-    });
+    }).done(function (data) {
+        updateTableByData(data)
+    })
 }
 
 function updateTableByData(data) {
