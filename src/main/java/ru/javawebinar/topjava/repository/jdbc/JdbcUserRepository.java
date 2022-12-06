@@ -98,6 +98,16 @@ public class JdbcUserRepository implements UserRepository {
         return users;
     }
 
+    @Override
+    @Transactional
+    public User changeStatus(int id) {
+        if (jdbcTemplate.update("UPDATE users SET enabled=? WHERE id=? AND enabled=?", false, id, true) == 0) {
+            jdbcTemplate.update("UPDATE users SET enabled=? WHERE id=? AND enabled=?", true, id, false);
+        }
+        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        return setRoles(DataAccessUtils.singleResult(users));
+    }
+
     private void insertRoles(User u) {
         Set<Role> roles = u.getRoles();
         if (!CollectionUtils.isEmpty(roles)) {

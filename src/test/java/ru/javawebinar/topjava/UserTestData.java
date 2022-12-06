@@ -30,6 +30,8 @@ public class UserTestData {
     public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN, Role.USER);
     public static final User guest = new User(GUEST_ID, "Guest", "guest@gmail.com", "guest");
 
+    public static final User disabledUser = new User(USER_ID, "User", "user@yandex.ru", "password", 2000, false, new Date(), List.of(Role.USER));
+
     static {
         user.setMeals(meals);
         admin.setMeals(List.of(adminMeal2, adminMeal1));

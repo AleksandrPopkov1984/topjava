@@ -55,4 +55,8 @@ public class UserService {
     public User getWithMeals(int id) {
         return checkNotFoundWithId(repository.getWithMeals(id), id);
     }
+
+    public User changeStatus(int id) {
+        return repository.changeStatus(id);
+    }
 }

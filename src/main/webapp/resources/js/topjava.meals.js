@@ -49,7 +49,8 @@ function filterTable() {
         url: ctx.ajaxUrl + 'filter',
         data: $('#filterDetails').serialize(),
     }).done(function (data) {
-        updateTableByData(data)
+        updateTableByData(data);
+        successNoty("Filter is applied")
     })
 }
 
