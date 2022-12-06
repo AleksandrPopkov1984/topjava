@@ -53,4 +53,9 @@ public abstract class AbstractUserController {
         log.info("getWithMeals {}", id);
         return service.getWithMeals(id);
     }
+
+    public User changeStatus(int id) {
+        log.info("changeStatus {}", id);
+        return service.changeStatus(id);
+    }
 }

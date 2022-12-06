@@ -45,3 +45,16 @@ $(function () {
         })
     );
 });
+
+$('#enabled').click(function () {
+    changeStatus($(this).closest('tr').attr("id"));
+});
+
+function changeStatus(id) {
+    $.ajax({
+        type: "PUT",
+        url: ctx.ajaxUrl + id
+    }).done(function () {
+        successNoty("Changed");
+    });
+}
